@@ -1,5 +1,5 @@
 import Nav from "@/components/Nav";
-import CursorGlow from "@/components/CursorGlow";
+import DomainBackground from "@/components/DomainBackground";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Skills from "@/components/sections/Skills";
@@ -12,7 +12,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <>
-      <CursorGlow />
+      <DomainBackground />
       <Nav />
       <div className="relative mx-auto max-w-[920px] px-7">
         <Hero />

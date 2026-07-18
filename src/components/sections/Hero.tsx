@@ -1,4 +1,3 @@
-import NetworkCanvas from "@/components/NetworkCanvas";
 import TypedConsole from "@/components/TypedConsole";
 import StatStrip from "@/components/StatStrip";
 import { StaggerGroup, StaggerItem } from "@/components/Stagger";
@@ -7,7 +6,6 @@ import { links } from "@/lib/data";
 export default function Hero() {
   return (
     <section className="hero-shell relative overflow-hidden py-[76px]">
-      <NetworkCanvas />
       <StaggerGroup className="relative z-[1]">
         <StaggerItem>
           <TypedConsole />
