@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0d0f16;
+  --bg-alt: #10131c;
+  --surface: #151824;
+  --ink: #e7e9f0;
+  --ink-soft: #9aa0b4;
+  --ink-faint: #656b80;
+  --accent: #f2b342;
+  --accent-ink: #14171f;
+  --accent-2: #34d6c1;
+  --border: #262a3a;
+  --border-strong: #34394c;
+  --code-bg: #1b1e2c;
+  --grid-line: rgba(231, 233, 240, 0.05);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme="light"] {
+  --bg: #edeff3;
+  --bg-alt: #e3e6ed;
+  --surface: #ffffff;
+  --ink: #14171f;
+  --ink-soft: #4a5063;
+  --ink-faint: #7b8098;
+  --accent: #b87608;
+  --accent-ink: #ffffff;
+  --accent-2: #0e8f82;
+  --border: #d8dbe2;
+  --border-strong: #c2c6d1;
+  --code-bg: #e4e7ee;
+  --grid-line: rgba(20, 23, 31, 0.05);
+  --shadow: 0 1px 2px rgba(20, 23, 31, 0.04), 0 8px 24px rgba(20, 23, 31, 0.06);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-alt: var(--bg-alt);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-2: var(--accent-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-code-bg: var(--code-bg);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+a {
+  color: inherit;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
