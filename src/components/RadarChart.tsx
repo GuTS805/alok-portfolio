@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 type Axis = { label: string; value: number };
 
@@ -26,7 +27,7 @@ export default function RadarChart({
 }) {
   const ref = useRef<SVGSVGElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
-  const reduced = useReducedMotion();
+  const reduced = useSafeReducedMotion();
   const step = (Math.PI * 2) / axes.length;
 
   const dataPoints = axes.map((a, i) => point(i * step, (a.value / max) * RADIUS));

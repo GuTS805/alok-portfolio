@@ -79,15 +79,6 @@ type Ember = {
   size: number;
 };
 type Petal = { x: number; y: number; vy: number; sway: number; rot: number };
-type Dog = {
-  x: number;
-  y: number;
-  baseY: number;
-  vx: number;
-  facing: number;
-  walk: number;
-  state: "wander" | "hunt";
-};
 type Wisp = { angle: number; radius: number; speed: number; size: number; bob: number };
 
 export default function DomainBackground() {
@@ -173,7 +164,6 @@ export default function DomainBackground() {
     let galaxy: GalaxyPoint[] = [];
     let embers: Ember[] = [];
     let petals: Petal[] = [];
-    let dogs: Dog[] = [];
     let wisps: Wisp[] = [];
 
     function resize() {
@@ -214,16 +204,6 @@ export default function DomainBackground() {
         vy: 0.3 + Math.random() * 0.4,
         sway: Math.random() * Math.PI * 2,
         rot: Math.random() * Math.PI * 2,
-      }));
-
-      dogs = Array.from({ length: 2 }, (_, i) => ({
-        x: w * (0.2 + i * 0.55),
-        y: h * 0.93 + i * 20,
-        baseY: h * 0.93 + i * 20,
-        vx: i === 0 ? 0.55 : -0.55,
-        facing: i === 0 ? 1 : -1,
-        walk: Math.random() * Math.PI * 2,
-        state: "wander" as const,
       }));
 
       wisps = Array.from({ length: Math.round(10 * scale) }, (_, i) => ({
@@ -422,80 +402,155 @@ export default function DomainBackground() {
     }
 
     // ---------------- Ten Shadows / Mahoraga ----------------
-    function drawDog(dog: Dog, primary: string) {
+    // Towering Mahoraga silhouette — humanoid body, forearm blade, head-tail,
+    // and paired wings sprouting from the eye sockets, per its canon design.
+    function drawMahoraga(
+      time: number,
+      anchorX: number,
+      groundY: number,
+      unitScale: number,
+      primary: string,
+      secondary: string,
+      alpha: number
+    ) {
       const ctx2 = ctx!;
+      const mouse = mouseRef.current;
+      const dxm = mouse.active ? mouse.x - anchorX : 9999;
+      const dym = mouse.active ? mouse.y - groundY + 500 * unitScale : 9999;
+      const nearDist = Math.sqrt(dxm * dxm + dym * dym);
+      const sensed = mouse.active && nearDist < 480;
+      const eyeGlow = sensed ? 1 : 0.4;
+
       ctx2.save();
-      ctx2.translate(dog.x, dog.y);
-      ctx2.scale(dog.facing * 1.9, 1.9);
+      ctx2.globalAlpha = alpha;
+      ctx2.translate(anchorX, groundY);
+      ctx2.scale(unitScale, unitScale);
 
-      const eyeGlow = dog.state === "hunt" ? 1 : 0.45;
+      const body = "rgba(5, 4, 10, 0.95)";
+      ctx2.fillStyle = body;
 
-      // ground contact shadow
-      ctx2.fillStyle = "rgba(0, 0, 0, 0.35)";
+      // ground shadow
+      ctx2.fillStyle = "rgba(0, 0, 0, 0.4)";
       ctx2.beginPath();
-      ctx2.ellipse(0, 14, 26, 5, 0, 0, Math.PI * 2);
+      ctx2.ellipse(0, 4, 140, 22, 0, 0, Math.PI * 2);
       ctx2.fill();
-
-      // violet rim glow behind the silhouette
-      ctx2.globalCompositeOperation = "lighter";
-      ctx2.fillStyle = `rgba(${primary}, ${dog.state === "hunt" ? 0.3 : 0.16})`;
-      ctx2.beginPath();
-      ctx2.ellipse(1, -1, 30, 16, 0, 0, Math.PI * 2);
-      ctx2.fill();
-      ctx2.globalCompositeOperation = "source-over";
-
-      ctx2.fillStyle = "rgba(4, 4, 9, 0.96)";
-      ctx2.strokeStyle = "rgba(4, 4, 9, 0.96)";
-      ctx2.lineCap = "round";
+      ctx2.fillStyle = body;
 
       // legs
-      for (let i = 0; i < 4; i++) {
-        const lx = -13 + i * 9;
-        const swing = Math.sin(dog.walk + i * (Math.PI / 2)) * 7;
-        ctx2.beginPath();
-        ctx2.moveTo(lx, 6);
-        ctx2.lineTo(lx + swing * 0.4, 20);
-        ctx2.lineWidth = 3.5;
-        ctx2.stroke();
-      }
-
-      // tail
       ctx2.beginPath();
-      ctx2.moveTo(-18, -1);
-      ctx2.quadraticCurveTo(-32, -10 + Math.sin(dog.walk) * 5, -28, -22);
-      ctx2.lineWidth = 4;
-      ctx2.stroke();
-
-      // body
-      ctx2.beginPath();
-      ctx2.ellipse(0, 0, 22, 9, 0, 0, Math.PI * 2);
+      ctx2.moveTo(-70, 0);
+      ctx2.lineTo(-92, -250);
+      ctx2.lineTo(-32, -272);
+      ctx2.lineTo(-18, 0);
+      ctx2.closePath();
       ctx2.fill();
-
-      // neck/head
       ctx2.beginPath();
-      ctx2.ellipse(22, -7, 10, 6.5, -0.35, 0, Math.PI * 2);
-      ctx2.fill();
-
-      // ears
-      ctx2.beginPath();
-      ctx2.moveTo(27, -13);
-      ctx2.lineTo(32, -22);
-      ctx2.lineTo(23, -15);
+      ctx2.moveTo(70, 0);
+      ctx2.lineTo(92, -250);
+      ctx2.lineTo(32, -272);
+      ctx2.lineTo(18, 0);
       ctx2.closePath();
       ctx2.fill();
 
-      // glowing eye
-      ctx2.globalCompositeOperation = "lighter";
-      const eg = ctx2.createRadialGradient(27, -9, 0, 27, -9, 5);
-      eg.addColorStop(0, `rgba(${primary}, ${0.9 * eyeGlow})`);
-      eg.addColorStop(1, `rgba(${primary}, 0)`);
-      ctx2.fillStyle = eg;
+      // hakama flare at the hips
       ctx2.beginPath();
-      ctx2.arc(27, -9, 5, 0, Math.PI * 2);
+      ctx2.moveTo(-118, -240);
+      ctx2.quadraticCurveTo(0, -295, 118, -240);
+      ctx2.lineTo(88, -395);
+      ctx2.quadraticCurveTo(0, -425, -88, -395);
+      ctx2.closePath();
       ctx2.fill();
+
+      // torso
+      ctx2.beginPath();
+      ctx2.moveTo(-82, -392);
+      ctx2.quadraticCurveTo(-100, -545, -58, -640);
+      ctx2.lineTo(58, -640);
+      ctx2.quadraticCurveTo(100, -545, 82, -392);
+      ctx2.closePath();
+      ctx2.fill();
+
+      // trailing left arm
+      ctx2.beginPath();
+      ctx2.moveTo(-72, -595);
+      ctx2.quadraticCurveTo(-142, -520, -128, -390);
+      ctx2.lineTo(-92, -395);
+      ctx2.quadraticCurveTo(-98, -515, -52, -580);
+      ctx2.closePath();
+      ctx2.fill();
+
+      // raised right arm with forearm blade
+      ctx2.save();
+      ctx2.translate(68, -600);
+      ctx2.rotate(-0.55 + Math.sin(time * 0.0004) * 0.03);
+      ctx2.beginPath();
+      ctx2.moveTo(0, -6);
+      ctx2.lineTo(118, -46);
+      ctx2.lineTo(112, -16);
+      ctx2.lineTo(6, 24);
+      ctx2.closePath();
+      ctx2.fill();
+      ctx2.beginPath();
+      ctx2.moveTo(110, -30);
+      ctx2.lineTo(232, -78);
+      ctx2.lineTo(112, -18);
+      ctx2.closePath();
+      ctx2.fillStyle = `rgba(${secondary}, ${0.55 * alpha})`;
+      ctx2.fill();
+      ctx2.restore();
+      ctx2.fillStyle = body;
+
+      // head
+      ctx2.beginPath();
+      ctx2.ellipse(0, -690, 52, 58, 0, 0, Math.PI * 2);
+      ctx2.fill();
+
+      // head-tail sweeping back
+      ctx2.beginPath();
+      ctx2.moveTo(6, -742);
+      ctx2.quadraticCurveTo(34, -800 + Math.sin(time * 0.0009) * 12, 18, -862);
+      ctx2.lineWidth = 15;
+      ctx2.strokeStyle = body;
+      ctx2.lineCap = "round";
+      ctx2.stroke();
+
+      // wings sprouting from the eye sockets
+      for (const side of [-1, 1]) {
+        ctx2.save();
+        ctx2.translate(side * 38, -698);
+        ctx2.rotate(side * (0.75 + Math.sin(time * 0.0006) * 0.06));
+        ctx2.beginPath();
+        ctx2.moveTo(0, 0);
+        ctx2.quadraticCurveTo(side * 70, -30, side * 130, -14);
+        ctx2.quadraticCurveTo(side * 80, 6, side * 60, 30);
+        ctx2.quadraticCurveTo(side * 30, 12, 0, 20);
+        ctx2.closePath();
+        ctx2.fillStyle = body;
+        ctx2.fill();
+        ctx2.restore();
+      }
+
+      // glowing eyes at the wing roots
+      ctx2.globalCompositeOperation = "lighter";
+      for (const side of [-1, 1]) {
+        const ex = side * 38;
+        const ey = -698;
+        const eg = ctx2.createRadialGradient(ex, ey, 0, ex, ey, 16);
+        eg.addColorStop(0, `rgba(${primary}, ${0.85 * eyeGlow})`);
+        eg.addColorStop(1, `rgba(${primary}, 0)`);
+        ctx2.fillStyle = eg;
+        ctx2.beginPath();
+        ctx2.arc(ex, ey, 16, 0, Math.PI * 2);
+        ctx2.fill();
+      }
       ctx2.globalCompositeOperation = "source-over";
 
       ctx2.restore();
+
+      // dharma wheel floating above the head
+      const headWorldX = anchorX;
+      const headWorldY = groundY - 760 * unitScale;
+      drawWheel(time, headWorldX, headWorldY, secondary, alpha);
     }
 
     function drawWheel(
@@ -611,17 +666,22 @@ export default function DomainBackground() {
       const ctx2 = ctx!;
       ctx2.save();
       ctx2.globalAlpha = alpha;
-      const cx = w > 760 ? w - Math.min(w, h) * 0.26 : w * 0.98;
-      const cy = w > 760 ? h * 0.24 : h * 0.1;
-      const mouse = mouseRef.current;
+
+      const anchorX = w > 760 ? w * 0.76 : w * 0.58;
+      const groundY = h * 1.02;
+      const desiredHeight = h * (w > 760 ? 0.95 : 0.68);
+      const wheelR = Math.min(w, h) * (w > 760 ? 0.15 : 0.12);
+      const unitScale = Math.max(0.32, (desiredHeight - wheelR) / 760);
+      const wispCenterY = groundY - 380 * unitScale;
+      const wispSpread = 170 * unitScale;
 
       for (const wp of wisps) {
         const a = wp.angle + time * wp.speed;
         const bob = Math.sin(time * 0.0006 + wp.bob) * 18;
-        const x = cx + Math.cos(a) * wp.radius;
-        const y = cy + Math.sin(a) * wp.radius * 0.6 + bob;
+        const x = anchorX + Math.cos(a) * (wispSpread + wp.radius * 0.3);
+        const y = wispCenterY + Math.sin(a) * (wispSpread + wp.radius * 0.3) * 0.6 + bob;
         const grad = ctx2.createRadialGradient(x, y, 0, x, y, wp.size);
-        grad.addColorStop(0, `rgba(60, 40, 90, 0.4)`);
+        grad.addColorStop(0, `rgba(60, 40, 90, 0.35)`);
         grad.addColorStop(1, `rgba(60, 40, 90, 0)`);
         ctx2.fillStyle = grad;
         ctx2.beginPath();
@@ -629,28 +689,7 @@ export default function DomainBackground() {
         ctx2.fill();
       }
 
-      drawWheel(time, cx, cy, secondary, 1);
-
-      for (const dog of dogs) {
-        const dx = mouse.active ? mouse.x - dog.x : 0;
-        const dy = mouse.active ? mouse.y - dog.y : 0;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (mouse.active && dist < 320 && mouse.y > h * 0.5) {
-          dog.state = "hunt";
-          dog.facing = dx > 0 ? 1 : -1;
-          dog.x += Math.sign(dx) * 1.1;
-          dog.y += clamp(dy, -1, 1) * 0.4;
-        } else {
-          dog.state = "wander";
-          dog.x += dog.vx;
-          dog.y = dog.baseY + Math.sin(time * 0.0008 + dog.x * 0.01) * 6;
-          if (dog.x < w * 0.08 || dog.x > w * 0.92) dog.vx *= -1;
-          dog.facing = dog.vx > 0 ? 1 : -1;
-        }
-        dog.walk += dog.state === "hunt" ? 0.35 : 0.18;
-        drawDog(dog, primary);
-      }
+      drawMahoraga(time, anchorX, groundY, unitScale, primary, secondary, 1);
 
       ctx2.restore();
     }

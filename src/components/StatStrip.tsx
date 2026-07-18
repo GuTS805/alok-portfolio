@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useInView, useReducedMotion } from "framer-motion";
+import { useInView } from "framer-motion";
 import { stats } from "@/lib/data";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 function StatCell({
   value,
@@ -15,7 +16,7 @@ function StatCell({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
-  const reduced = useReducedMotion();
+  const reduced = useSafeReducedMotion();
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {

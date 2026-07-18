@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import type { LanguageStat } from "@/lib/github";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 const LANG_COLORS: Record<string, string> = {
   TypeScript: "var(--accent-2)",
@@ -17,7 +18,7 @@ const LANG_COLORS: Record<string, string> = {
 export default function LanguageBars({ data }: { data: LanguageStat[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
-  const reduced = useReducedMotion();
+  const reduced = useSafeReducedMotion();
 
   return (
     <div ref={ref} className="flex flex-col gap-3">

@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { ReactNode } from "react";
+import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 const container: Variants = {
   hidden: {},
@@ -24,7 +25,7 @@ export function StaggerGroup({
   children: ReactNode;
   className?: string;
 }) {
-  const reduced = useReducedMotion();
+  const reduced = useSafeReducedMotion();
   return (
     <motion.div
       className={className}

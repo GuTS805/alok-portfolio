@@ -1,5 +1,6 @@
 import Nav from "@/components/Nav";
 import DomainBackground from "@/components/DomainBackground";
+import IntroOverlay from "@/components/IntroOverlay";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Skills from "@/components/sections/Skills";
@@ -13,6 +14,7 @@ export default function Home() {
   return (
     <>
       <DomainBackground />
+      <IntroOverlay />
       <Nav />
       <div className="relative mx-auto max-w-[920px] px-7">
         <Hero />
