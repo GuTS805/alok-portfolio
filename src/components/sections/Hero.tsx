@@ -1,29 +1,36 @@
 import NetworkCanvas from "@/components/NetworkCanvas";
 import TypedConsole from "@/components/TypedConsole";
 import StatStrip from "@/components/StatStrip";
+import { StaggerGroup, StaggerItem } from "@/components/Stagger";
 import { links } from "@/lib/data";
 
 export default function Hero() {
   return (
     <section className="hero-shell relative overflow-hidden py-[76px]">
       <NetworkCanvas />
-      <div className="relative z-[1]">
-        <TypedConsole />
+      <StaggerGroup className="relative z-[1]">
+        <StaggerItem>
+          <TypedConsole />
+        </StaggerItem>
 
-        <h1 className="mb-3.5 font-[family-name:var(--font-display)] text-[clamp(2.4rem,6vw,3.6rem)] font-semibold leading-[1.05] tracking-[-0.01em] text-balance">
-          Alok Srivastava
-        </h1>
+        <StaggerItem>
+          <h1 className="mb-3.5 font-[family-name:var(--font-display)] text-[clamp(2.4rem,6vw,3.6rem)] font-semibold leading-[1.05] tracking-[-0.01em] text-balance">
+            Alok Srivastava
+          </h1>
+        </StaggerItem>
 
-        <p className="mb-6 max-w-[58ch] text-[clamp(1rem,2.2vw,1.2rem)] text-ink-soft text-balance">
-          Full-stack web developer and CS undergraduate who ships{" "}
-          <strong className="font-semibold text-ink">
-            realtime, production-oriented
-          </strong>{" "}
-          software — from live coding battles to hyperlocal social feeds —
-          with Next.js, TypeScript, and Supabase.
-        </p>
+        <StaggerItem>
+          <p className="mb-6 max-w-[58ch] text-[clamp(1rem,2.2vw,1.2rem)] text-ink-soft text-balance">
+            Full-stack web developer and CS undergraduate who ships{" "}
+            <strong className="font-semibold text-ink">
+              realtime, production-oriented
+            </strong>{" "}
+            software — from live coding battles to hyperlocal social feeds —
+            with Next.js, TypeScript, and Supabase.
+          </p>
+        </StaggerItem>
 
-        <div className="mb-8 flex flex-wrap gap-2.5">
+        <StaggerItem className="mb-8 flex flex-wrap gap-2.5">
           <span className="rounded border border-border-strong bg-surface px-2.5 py-1.5 font-mono text-[12.5px] text-ink-soft">
             B.Tech CSE · ABES Engineering College
           </span>
@@ -33,9 +40,9 @@ export default function Hero() {
           <span className="rounded border border-border-strong bg-surface px-2.5 py-1.5 font-mono text-[12.5px] text-ink-soft">
             Seeking SWE Internship
           </span>
-        </div>
+        </StaggerItem>
 
-        <div className="flex flex-wrap gap-3">
+        <StaggerItem className="flex flex-wrap gap-3">
           <a
             href={links.emailCompose}
             target="_blank"
@@ -60,10 +67,12 @@ export default function Hero() {
           >
             LinkedIn ↗
           </a>
-        </div>
+        </StaggerItem>
 
-        <StatStrip />
-      </div>
+        <StaggerItem>
+          <StatStrip />
+        </StaggerItem>
+      </StaggerGroup>
     </section>
   );
 }

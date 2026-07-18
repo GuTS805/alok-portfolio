@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import ProjectSparkline from "./ProjectSparkline";
 
 type Project = {
   name: string;
@@ -9,6 +10,12 @@ type Project = {
   stack: string[];
   points: string[];
 };
+
+function seedFromName(name: string) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h += name.charCodeAt(i);
+  return h;
+}
 
 export default function ProjectCard({ project }: { project: Project }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -60,9 +67,10 @@ export default function ProjectCard({ project }: { project: Project }) {
           live
         </span>
       </div>
-      <p className="relative mb-4 text-[13.5px] text-ink-faint">
-        {project.tagline}
-      </p>
+      <div className="relative mb-4 flex items-center justify-between gap-4">
+        <p className="text-[13.5px] text-ink-faint">{project.tagline}</p>
+        <ProjectSparkline seed={seedFromName(project.name)} />
+      </div>
       <div className="relative mb-[18px] flex flex-wrap gap-1.5">
         {project.stack.map((s) => (
           <span

@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
 import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { href: "#about", label: "About" },
   { href: "#skills", label: "Stack" },
+  { href: "#activity", label: "Activity" },
   { href: "#projects", label: "Projects" },
   { href: "#achievements", label: "Log" },
   { href: "#contact", label: "Contact" },
@@ -14,6 +16,12 @@ const links = [
 export default function Nav() {
   const [active, setActive] = useState("");
   const navRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 200,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   useEffect(() => {
     const sections = links
@@ -66,6 +74,11 @@ export default function Nav() {
 
         <ThemeToggle />
       </div>
+
+      <motion.div
+        className="h-px origin-left bg-accent"
+        style={{ scaleX: progress }}
+      />
     </div>
   );
 }
