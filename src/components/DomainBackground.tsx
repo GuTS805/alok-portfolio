@@ -577,27 +577,40 @@ export default function DomainBackground() {
       const tilt = mouse.active ? clamp((mouse.x - cx) / (w * 0.5), -1, 1) : 0;
       const rot = time * 0.00011 + burst;
 
-      const gold = `rgba(${primary}, ${(0.6 + flash * 0.35) * alpha})`;
+      const glow = clamp((0.6 + flash * 0.4) * alpha, 0, 1);
+      const gold = `rgba(${primary}, ${glow})`;
       const goldDim = `rgba(${primary}, ${0.28 * alpha})`;
+
+      function ball(x: number, y: number, r: number) {
+        const g = ctx2.createRadialGradient(
+          x - r * 0.35,
+          y - r * 0.4,
+          r * 0.05,
+          x,
+          y,
+          r
+        );
+        g.addColorStop(0, `rgba(255, 246, 218, ${glow})`);
+        g.addColorStop(0.45, gold);
+        g.addColorStop(1, `rgba(60, 40, 10, ${glow})`);
+        return g;
+      }
 
       ctx2.save();
       ctx2.translate(cx, cy);
       ctx2.scale(1, 0.8 + tilt * 0.05);
       ctx2.rotate(rot);
 
-      ctx2.lineWidth = 3.5;
+      ctx2.lineWidth = R * 0.13;
       ctx2.strokeStyle = gold;
       ctx2.beginPath();
-      ctx2.arc(0, 0, R, 0, Math.PI * 2);
+      ctx2.arc(0, 0, R * 0.72, 0, Math.PI * 2);
       ctx2.stroke();
 
-      ctx2.lineWidth = 1.2;
+      ctx2.lineWidth = 1;
       ctx2.strokeStyle = goldDim;
       ctx2.beginPath();
-      ctx2.arc(0, 0, R * 0.82, 0, Math.PI * 2);
-      ctx2.stroke();
-      ctx2.beginPath();
-      ctx2.arc(0, 0, R * 0.28, 0, Math.PI * 2);
+      ctx2.arc(0, 0, R * 0.5, 0, Math.PI * 2);
       ctx2.stroke();
 
       const spokes = 8;
@@ -605,44 +618,34 @@ export default function DomainBackground() {
         const a = (i / spokes) * Math.PI * 2;
         const x1 = Math.cos(a) * R * 0.28;
         const y1 = Math.sin(a) * R * 0.28;
-        const x2 = Math.cos(a) * R * 0.82;
-        const y2 = Math.sin(a) * R * 0.82;
+        const x2 = Math.cos(a) * R;
+        const y2 = Math.sin(a) * R;
 
         ctx2.beginPath();
         ctx2.moveTo(x1, y1);
         ctx2.lineTo(x2, y2);
-        ctx2.lineWidth = 2.2;
+        ctx2.lineWidth = R * 0.075;
         ctx2.strokeStyle = gold;
+        ctx2.lineCap = "round";
         ctx2.stroke();
+      }
 
-        ctx2.save();
-        ctx2.translate(Math.cos(a) * R, Math.sin(a) * R);
-        ctx2.rotate(a + Math.PI / 2);
+      for (let i = 0; i < spokes; i++) {
+        const a = (i / spokes) * Math.PI * 2;
+        const x2 = Math.cos(a) * R;
+        const y2 = Math.sin(a) * R;
+        const knobR = R * 0.14;
         ctx2.beginPath();
-        ctx2.moveTo(0, -10);
-        ctx2.lineTo(5.5, 5);
-        ctx2.lineTo(0, 2);
-        ctx2.lineTo(-5.5, 5);
-        ctx2.closePath();
-        ctx2.fillStyle = gold;
-        ctx2.fill();
-        ctx2.restore();
-
-        ctx2.beginPath();
-        ctx2.arc((x1 + x2) / 2, (y1 + y2) / 2, 2.6, 0, Math.PI * 2);
-        ctx2.fillStyle = gold;
+        ctx2.arc(x2, y2, knobR, 0, Math.PI * 2);
+        ctx2.fillStyle = ball(x2, y2, knobR);
         ctx2.fill();
       }
 
-      ctx2.globalCompositeOperation = "lighter";
-      const hub = ctx2.createRadialGradient(0, 0, 0, 0, 0, R * 0.32);
-      hub.addColorStop(0, `rgba(${primary}, ${(0.55 + flash * 0.45) * alpha})`);
-      hub.addColorStop(1, `rgba(${primary}, 0)`);
-      ctx2.fillStyle = hub;
+      const hubR = R * 0.3;
       ctx2.beginPath();
-      ctx2.arc(0, 0, R * 0.32, 0, Math.PI * 2);
+      ctx2.arc(0, 0, hubR, 0, Math.PI * 2);
+      ctx2.fillStyle = ball(0, 0, hubR);
       ctx2.fill();
-      ctx2.globalCompositeOperation = "source-over";
 
       ctx2.restore();
 

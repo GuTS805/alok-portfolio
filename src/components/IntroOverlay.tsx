@@ -5,57 +5,67 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 const SPOKES = Array.from({ length: 8 });
+const CENTER = 120;
+const RIM_R = 76;
+const KNOB_R = 96;
+const HUB_R = 27;
+const KNOB_SIZE = 15;
 
 function WheelGlyph() {
   return (
-    <svg width="180" height="180" viewBox="0 0 200 200" aria-hidden="true">
+    <svg width="220" height="220" viewBox="0 0 240 240" aria-hidden="true">
+      <defs>
+        <radialGradient id="wheelBall" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stopColor="#fff6da" />
+          <stop offset="40%" stopColor="var(--accent)" />
+          <stop offset="100%" stopColor="#5c3f10" />
+        </radialGradient>
+        <radialGradient id="wheelRim" cx="38%" cy="32%" r="80%">
+          <stop offset="0%" stopColor="#ffedb0" />
+          <stop offset="55%" stopColor="var(--accent)" />
+          <stop offset="100%" stopColor="#4a3009" />
+        </radialGradient>
+      </defs>
+
       <circle
-        cx="100"
-        cy="100"
-        r="72"
-        stroke="var(--accent)"
-        strokeWidth="3"
+        cx={CENTER}
+        cy={CENTER}
+        r={RIM_R}
+        stroke="url(#wheelRim)"
+        strokeWidth="15"
         fill="none"
       />
-      <circle
-        cx="100"
-        cy="100"
-        r="56"
-        stroke="var(--accent)"
-        strokeWidth="1"
-        fill="none"
-        opacity="0.4"
-      />
-      <circle
-        cx="100"
-        cy="100"
-        r="20"
-        stroke="var(--accent)"
-        strokeWidth="1"
-        fill="none"
-        opacity="0.4"
-      />
+
       {SPOKES.map((_, i) => {
         const a = (i / SPOKES.length) * Math.PI * 2;
-        const x1 = 100 + Math.cos(a) * 20;
-        const y1 = 100 + Math.sin(a) * 20;
-        const x2 = 100 + Math.cos(a) * 72;
-        const y2 = 100 + Math.sin(a) * 72;
+        const x1 = CENTER + Math.cos(a) * HUB_R;
+        const y1 = CENTER + Math.sin(a) * HUB_R;
+        const x2 = CENTER + Math.cos(a) * KNOB_R;
+        const y2 = CENTER + Math.sin(a) * KNOB_R;
         return (
-          <g key={i}>
-            <line
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              stroke="var(--accent)"
-              strokeWidth="2"
-            />
-            <circle cx={x2} cy={y2} r="3.5" fill="var(--accent)" />
-          </g>
+          <line
+            key={i}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke="url(#wheelRim)"
+            strokeWidth="9"
+            strokeLinecap="round"
+          />
         );
       })}
-      <circle cx="100" cy="100" r="18" fill="var(--accent)" opacity="0.55" />
+
+      {SPOKES.map((_, i) => {
+        const a = (i / SPOKES.length) * Math.PI * 2;
+        const x = CENTER + Math.cos(a) * KNOB_R;
+        const y = CENTER + Math.sin(a) * KNOB_R;
+        return (
+          <circle key={i} cx={x} cy={y} r={KNOB_SIZE} fill="url(#wheelBall)" />
+        );
+      })}
+
+      <circle cx={CENTER} cy={CENTER} r={HUB_R} fill="url(#wheelBall)" />
     </svg>
   );
 }
