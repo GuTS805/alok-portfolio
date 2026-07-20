@@ -5,15 +5,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useSafeReducedMotion } from "@/lib/useSafeReducedMotion";
 
 const SPOKES = Array.from({ length: 8 });
-const CENTER = 120;
-const RIM_R = 76;
-const KNOB_R = 96;
-const HUB_R = 27;
-const KNOB_SIZE = 15;
+const CENTER = 130;
+const RIM_R = 86;
+const KNOB_R = 108;
+const HUB_R = 32;
+const KNOB_SIZE = 18;
 
 function WheelGlyph() {
   return (
-    <svg width="220" height="220" viewBox="0 0 240 240" aria-hidden="true">
+    <svg width="260" height="260" viewBox="0 0 260 260" aria-hidden="true">
       <defs>
         <radialGradient id="wheelBall" cx="35%" cy="30%" r="75%">
           <stop offset="0%" stopColor="#fff6da" />
@@ -32,7 +32,7 @@ function WheelGlyph() {
         cy={CENTER}
         r={RIM_R}
         stroke="url(#wheelRim)"
-        strokeWidth="15"
+        strokeWidth="17"
         fill="none"
       />
 
@@ -50,7 +50,7 @@ function WheelGlyph() {
             x2={x2}
             y2={y2}
             stroke="url(#wheelRim)"
-            strokeWidth="9"
+            strokeWidth="11"
             strokeLinecap="round"
           />
         );
@@ -81,7 +81,7 @@ export default function IntroOverlay() {
       return;
     }
     document.body.style.overflow = "hidden";
-    const timer = setTimeout(() => setPhase("done"), 2400);
+    const timer = setTimeout(() => setPhase("done"), 2950);
     function skip() {
       setPhase("done");
     }
@@ -103,19 +103,27 @@ export default function IntroOverlay() {
       {phase === "playing" && (
         <motion.div
           className="fixed inset-0 z-[100] flex cursor-pointer flex-col items-center justify-center bg-bg"
-          exit={{ opacity: 0, scale: 1.08 }}
-          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          exit={{ opacity: 0, scale: 1.1 }}
+          transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
           onClick={() => setPhase("done")}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: 1, rotate: [0, 45, 200, 760, 1120] }}
+            animate={{
+              opacity: 1,
+              scale: [0.6, 1, 0.97, 1, 0.97, 1, 1, 1, 1.07, 1],
+              rotate: [0, 0, 40, 88, 132, 178, 178, 900, 1130, 1080],
+            }}
             transition={{
               opacity: { duration: 0.4 },
-              scale: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+              scale: {
+                duration: 2.6,
+                times: [0, 0.06, 0.15, 0.24, 0.33, 0.42, 0.5, 0.82, 0.93, 1],
+                ease: "easeInOut",
+              },
               rotate: {
-                duration: 1.7,
-                times: [0, 0.1, 0.32, 0.82, 1],
+                duration: 2.6,
+                times: [0, 0.06, 0.15, 0.24, 0.33, 0.42, 0.5, 0.82, 0.93, 1],
                 ease: "easeInOut",
               },
             }}
@@ -127,7 +135,7 @@ export default function IntroOverlay() {
             className="mt-7 font-mono text-xs uppercase tracking-[0.25em] text-accent"
             initial={{ opacity: 0 }}
             animate={{ opacity: [0, 1, 1, 0] }}
-            transition={{ duration: 2.2, times: [0, 0.22, 0.78, 1] }}
+            transition={{ duration: 2.8, times: [0, 0.2, 0.8, 1] }}
           >
             adapting domain expansion
           </motion.div>
@@ -135,8 +143,8 @@ export default function IntroOverlay() {
           <motion.div
             className="pointer-events-none absolute inset-0"
             initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 0, 0.9, 0] }}
-            transition={{ duration: 1.7, times: [0, 0.78, 0.86, 1] }}
+            animate={{ opacity: [0, 0, 0.95, 0] }}
+            transition={{ duration: 2.6, times: [0, 0.9, 0.95, 1] }}
             style={{
               background:
                 "radial-gradient(circle at center, var(--accent) 0%, transparent 65%)",

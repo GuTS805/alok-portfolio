@@ -561,13 +561,20 @@ export default function DomainBackground() {
       alpha: number
     ) {
       const ctx2 = ctx!;
-      const R = Math.min(w, h) * (w > 760 ? 0.15 : 0.12);
+      const R = Math.min(w, h) * (w > 760 ? 0.19 : 0.15);
       const cyclePos = (time % WHEEL_CYCLE_MS) / WHEEL_CYCLE_MS;
       let burst = 0;
       let flash = 0;
+      let notchWobble = 0;
       if (cyclePos > 0.68) {
         const p = clamp((cyclePos - 0.68) / 0.24, 0, 1);
-        burst = p * p * Math.PI * 5.5;
+        const notches = 10;
+        const notchP = Math.floor(p * notches) / notches;
+        burst = notchP * notchP * Math.PI * 5.5;
+        if (p > 0.92) {
+          const settle = clamp((p - 0.92) / 0.08, 0, 1);
+          notchWobble = Math.sin(settle * Math.PI) * 0.1;
+        }
         if (cyclePos > 0.9) {
           flash = 1 - clamp((cyclePos - 0.9) / 0.1, 0, 1);
         }
@@ -575,7 +582,7 @@ export default function DomainBackground() {
 
       const mouse = mouseRef.current;
       const tilt = mouse.active ? clamp((mouse.x - cx) / (w * 0.5), -1, 1) : 0;
-      const rot = time * 0.00011 + burst;
+      const rot = time * 0.00006 + burst + notchWobble;
 
       const glow = clamp((0.6 + flash * 0.4) * alpha, 0, 1);
       const gold = `rgba(${primary}, ${glow})`;
