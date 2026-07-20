@@ -80,6 +80,13 @@ type Ember = {
 };
 type Petal = { x: number; y: number; vy: number; sway: number; rot: number };
 type Wisp = { angle: number; radius: number; speed: number; size: number; bob: number };
+type Splat = {
+  cx: number;
+  cy: number;
+  tone: "light" | "dark";
+  blobs: { dx: number; dy: number; r: number }[];
+  drift: number;
+};
 
 export default function DomainBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -165,6 +172,21 @@ export default function DomainBackground() {
     let embers: Ember[] = [];
     let petals: Petal[] = [];
     let wisps: Wisp[] = [];
+    let splats: Splat[] = [];
+
+    function makeSplat(cx: number, cy: number, tone: Splat["tone"], scale: number): Splat {
+      const blobCount = 5 + Math.floor(Math.random() * 5);
+      const blobs = Array.from({ length: blobCount }, () => {
+        const a = Math.random() * Math.PI * 2;
+        const d = Math.random() * 46 * scale;
+        return {
+          dx: Math.cos(a) * d,
+          dy: Math.sin(a) * d,
+          r: (10 + Math.random() * 30) * scale,
+        };
+      });
+      return { cx, cy, tone, blobs, drift: Math.random() * Math.PI * 2 };
+    }
 
     function resize() {
       w = window.innerWidth;
@@ -213,6 +235,66 @@ export default function DomainBackground() {
         size: 14 + Math.random() * 30,
         bob: Math.random() * Math.PI * 2,
       }));
+
+      const corners: [number, number][] = [
+        [w * 0.06, h * 0.08],
+        [w * 0.94, h * 0.1],
+        [w * 0.08, h * 0.9],
+        [w * 0.92, h * 0.88],
+      ];
+      splats = [];
+      for (const [cx0, cy0] of corners) {
+        splats.push(makeSplat(cx0, cy0, "light", 1.1 * scale));
+        splats.push(
+          makeSplat(
+            cx0 + (Math.random() - 0.5) * 90,
+            cy0 + (Math.random() - 0.5) * 90,
+            "light",
+            0.6 * scale
+          )
+        );
+      }
+      const ringCx = w * 0.5;
+      const ringCy = h * 0.42;
+      const ringR = Math.min(w, h) * 0.22;
+      for (let i = 0; i < 4; i++) {
+        const a = Math.random() * Math.PI * 2;
+        splats.push(
+          makeSplat(
+            ringCx + Math.cos(a) * ringR * (0.5 + Math.random() * 0.6),
+            ringCy + Math.sin(a) * ringR * 0.55 * (0.5 + Math.random() * 0.6),
+            "dark",
+            0.9 * scale
+          )
+        );
+      }
+    }
+
+    function drawSplat(s: Splat, time: number, tint: string, alpha: number) {
+      const ctx2 = ctx!;
+      const bob = Math.sin(time * 0.00012 + s.drift) * 6;
+      if (s.tone === "dark") {
+        ctx2.fillStyle = `rgba(6, 7, 12, ${0.92 * alpha})`;
+        for (const b of s.blobs) {
+          ctx2.beginPath();
+          ctx2.arc(s.cx + b.dx, s.cy + b.dy + bob, b.r, 0, Math.PI * 2);
+          ctx2.fill();
+        }
+      } else {
+        for (const b of s.blobs) {
+          const x = s.cx + b.dx;
+          const y = s.cy + b.dy + bob;
+          const g = ctx2.createRadialGradient(x, y, 0, x, y, b.r * 1.5);
+          g.addColorStop(0, `rgba(255, 255, 255, ${0.95 * alpha})`);
+          g.addColorStop(0.35, `rgba(255, 255, 255, ${0.7 * alpha})`);
+          g.addColorStop(0.7, `rgba(${tint}, ${0.22 * alpha})`);
+          g.addColorStop(1, `rgba(${tint}, 0)`);
+          ctx2.fillStyle = g;
+          ctx2.beginPath();
+          ctx2.arc(x, y, b.r * 1.5, 0, Math.PI * 2);
+          ctx2.fill();
+        }
+      }
     }
 
     function themeBase() {
@@ -253,22 +335,26 @@ export default function DomainBackground() {
       const mouse = mouseRef.current;
       const mdx = mouse.active ? mouse.x - cx : 0;
       const mdy = mouse.active ? mouse.y - cy : 0;
+      const orbR = Math.min(w, h) * 0.14;
 
-      for (let ring = 1; ring <= 4; ring++) {
-        const rt = ((time * 0.00005) + ring / 4) % 1;
-        const r = rt * Math.min(w, h) * 0.55;
+      // swirling accretion bands
+      ctx2.globalCompositeOperation = "lighter";
+      for (let ring = 1; ring <= 5; ring++) {
+        const rt = ((time * 0.00004 * (ring % 2 === 0 ? -1 : 1)) + ring / 5) % 1;
+        const r = orbR + rt * Math.min(w, h) * 0.42;
+        const band = Math.max(0, 1 - Math.abs(rt - 0.5) * 2);
         ctx2.beginPath();
         ctx2.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx2.strokeStyle = `rgba(${primary}, ${(1 - rt) * 0.2})`;
-        ctx2.lineWidth = 1;
+        ctx2.strokeStyle = `rgba(${primary}, ${band * 0.35 * (1 - rt * 0.4)})`;
+        ctx2.lineWidth = 2 + band * 3;
         ctx2.stroke();
       }
 
-      ctx2.globalCompositeOperation = "lighter";
       for (const p of galaxy) {
         const a = p.angle + time * p.speed;
-        let x = cx + Math.cos(a) * p.radius;
-        let y = cy + Math.sin(a) * p.radius * 0.72;
+        const ringRadius = orbR + (p.radius % (Math.min(w, h) * 0.42));
+        let x = cx + Math.cos(a) * ringRadius;
+        let y = cy + Math.sin(a) * ringRadius * 0.62;
 
         if (mouse.active) {
           const dx = mouse.x - x;
@@ -292,22 +378,51 @@ export default function DomainBackground() {
         ctx2.arc(x, y, r * 3, 0, Math.PI * 2);
         ctx2.fill();
       }
-
-      const coreShift = mouse.active ? { x: mdx * 0.04, y: mdy * 0.04 } : { x: 0, y: 0 };
-      const core = ctx2.createRadialGradient(
-        cx + coreShift.x,
-        cy + coreShift.y,
-        0,
-        cx + coreShift.x,
-        cy + coreShift.y,
-        90
-      );
-      core.addColorStop(0, `rgba(${primary}, 0.45)`);
-      core.addColorStop(0.5, `rgba(${secondary}, 0.15)`);
-      core.addColorStop(1, `rgba(${primary}, 0)`);
-      ctx2.fillStyle = core;
-      ctx2.fillRect(cx - 100 + coreShift.x, cy - 100 + coreShift.y, 200, 200);
       ctx2.globalCompositeOperation = "source-over";
+
+      // event-horizon orb
+      const coreShift = mouse.active ? { x: mdx * 0.03, y: mdy * 0.03 } : { x: 0, y: 0 };
+      const ocx = cx + coreShift.x;
+      const ocy = cy + coreShift.y;
+
+      ctx2.globalCompositeOperation = "lighter";
+      const rim = ctx2.createRadialGradient(ocx, ocy, orbR * 0.7, ocx, ocy, orbR * 1.35);
+      rim.addColorStop(0, `rgba(${primary}, 0)`);
+      rim.addColorStop(0.78, `rgba(${secondary}, 0.55)`);
+      rim.addColorStop(1, `rgba(${primary}, 0)`);
+      ctx2.fillStyle = rim;
+      ctx2.beginPath();
+      ctx2.arc(ocx, ocy, orbR * 1.35, 0, Math.PI * 2);
+      ctx2.fill();
+      ctx2.globalCompositeOperation = "source-over";
+
+      ctx2.beginPath();
+      ctx2.arc(ocx, ocy, orbR, 0, Math.PI * 2);
+      ctx2.fillStyle = "rgba(4, 5, 9, 0.96)";
+      ctx2.fill();
+
+      // ink-splatter overlay: dark splats bite into the ring glow
+      for (const s of splats) {
+        if (s.tone === "dark") {
+          const dx = s.cx - cx;
+          const dy = s.cy - cy;
+          drawSplat(
+            { ...s, cx: ocx + dx, cy: ocy + dy },
+            time,
+            primary,
+            alpha
+          );
+        }
+      }
+
+      ctx2.restore();
+
+      // light splats sit above everything, unaffected by domain alpha fade
+      ctx2.save();
+      ctx2.globalAlpha = alpha;
+      for (const s of splats) {
+        if (s.tone === "light") drawSplat(s, time, secondary, alpha);
+      }
       ctx2.restore();
     }
 
