@@ -18,25 +18,17 @@ export default function About() {
           </div>
           <div className="flex flex-col gap-3.5 px-7 py-6">
             <p className="max-w-[62ch] text-[1.02rem] text-ink-soft">
-              I&apos;m a Computer Science undergraduate and full-stack
-              developer focused on{" "}
+              Computer Science undergraduate and full-stack developer focused
+              on{" "}
               <strong className="text-ink">
                 Next.js, TypeScript, React, and Supabase
               </strong>
-              , backed by strong DSA fundamentals in C++. I like building
-              software that behaves like a living system — realtime chat,
-              live matchmaking, instant sync — not just static pages.
-            </p>
-            <p className="max-w-[62ch] text-[1.02rem] text-ink-soft">
-              I&apos;ve shipped{" "}
+              , backed by strong DSA fundamentals in C++. I&apos;ve shipped{" "}
               <strong className="text-ink">
                 three production-oriented applications
               </strong>{" "}
-              end to end: authentication, database design, REST APIs, and
-              realtime infrastructure (WebSockets, Supabase Realtime).
-              I&apos;m currently deepening my systems design and AI/LLM
-              engineering skills while looking for a software engineering
-              internship where I can contribute to a real team.
+              end to end — authentication, database design, REST APIs, and
+              realtime infrastructure like WebSockets and Supabase Realtime.
             </p>
           </div>
         </div>
