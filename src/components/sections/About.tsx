@@ -18,17 +18,27 @@ export default function About() {
           </div>
           <div className="flex flex-col gap-3.5 px-7 py-6">
             <p className="max-w-[62ch] text-[1.02rem] text-ink-soft">
-              Computer Science undergraduate and full-stack developer focused
-              on{" "}
+              I&apos;m Alok Srivastava, a Computer Science undergraduate
+              passionate about building modern, user-focused web
+              applications. I enjoy transforming ideas into scalable,
+              real-world products using technologies like{" "}
               <strong className="text-ink">
-                Next.js, TypeScript, React, and Supabase
+                Next.js, React, TypeScript, Node.js, and MongoDB
               </strong>
-              , backed by strong DSA fundamentals in C++. I&apos;ve shipped{" "}
-              <strong className="text-ink">
-                three production-oriented applications
-              </strong>{" "}
-              end to end — authentication, database design, REST APIs, and
-              realtime infrastructure like WebSockets and Supabase Realtime.
+              .
+            </p>
+            <p className="max-w-[62ch] text-[1.02rem] text-ink-soft">
+              I&apos;m currently strengthening my problem-solving skills
+              through Data Structures &amp; Algorithms while continuously
+              exploring full-stack development, real-time systems, and
+              AI-powered applications. I enjoy tackling challenging projects
+              that push me to learn new technologies and improve my
+              engineering skills.
+            </p>
+            <p className="max-w-[62ch] text-[1.02rem] text-ink-soft">
+              My goal is to grow into a software engineer who builds
+              impactful, high-quality products with clean code, intuitive
+              user experiences, and scalable architecture.
             </p>
           </div>
         </div>
