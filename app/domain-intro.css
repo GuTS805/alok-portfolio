@@ -1,0 +1,77 @@
+.domain-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  color: #dfc28b;
+  background: #070706;
+  background: radial-gradient(ellipse at 50% 46%, #211c12 0%, #0c0b08 35%, #070706 70%);
+}
+.domain-intro[open] {
+  display: grid;
+  place-items: center;
+  animation: adaptation-reveal 3.2s linear forwards;
+}
+.domain-intro::backdrop { background: transparent; backdrop-filter: none; }
+.adaptation-mark { position: relative; width: min(64vw, 330px); text-align: center; }
+.mahoraga-wheel {
+  display: block;
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 12px #d9ae4830);
+  transform-origin: center;
+  animation: wheel-adapt 1.65s .4s cubic-bezier(.65, 0, .2, 1) both;
+}
+.adaptation-halo {
+  position: absolute;
+  inset: -15% -15% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #d7b35c26, transparent 65%);
+  opacity: 0;
+  animation: adaptation-glow .7s 1.95s ease-out both;
+}
+.adaptation-label {
+  position: relative;
+  height: 14px;
+  margin: 28px 0 20px;
+  font: 9px var(--font-mono), monospace;
+  letter-spacing: .4em;
+}
+.adaptation-label span { position: absolute; inset: 0; }
+.adaptation-label span:first-child { animation: adaptation-label-out .2s 2.05s both; }
+.adaptation-label span:last-child { animation: adaptation-label-in .25s 2.1s both; }
+.adaptation-rule { width: 32px; height: 1px; margin: auto; background: #b39151; }
+.intro-skip {
+  position: absolute;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
+  padding: 14px 16px;
+  border: 1px solid #665536;
+  background: transparent;
+  color: #cbb78f;
+  font: 9px var(--font-mono), monospace;
+  letter-spacing: .15em;
+  cursor: pointer;
+}
+.intro-skip span { margin-left: 18px; }
+.intro-skip:hover { background: #b391511c; }
+.intro-skip:focus-visible { outline: 2px solid #e5c886; outline-offset: 5px; }
+@keyframes wheel-adapt { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes adaptation-glow { 0% { opacity: 0; transform: scale(.85); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.2); } }
+@keyframes adaptation-label-out { to { opacity: 0; } }
+@keyframes adaptation-label-in { from { opacity: 0; } to { opacity: 1; } }
+/* CSS also releases the page if JavaScript is unavailable. */
+@keyframes adaptation-reveal { 0%, 81% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) {
+  .domain-intro[open] { display: none; animation: none; }
+  .domain-intro * { animation: none; }
+}
