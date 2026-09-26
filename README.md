@@ -1,4 +1,4 @@
-# Alok Srivastava — Malevolent Shrine portfolio
+# Alok Srivastava portfolio
 
 A Next.js 16.3.5 / React 19.3 portfolio with a server-rendered homepage, five statically generated case studies, and small client components for navigation and interaction. The original shrine artwork and résumé are preserved. The old static `index.html`, its scripts, and the legacy video assets remain available but are not loaded by the redesigned application.
 
